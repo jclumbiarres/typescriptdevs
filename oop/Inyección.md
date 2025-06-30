@@ -1,12 +1,24 @@
+## Inyección de Dependencias en TypeScript: Explicación Exhaustiva
+
+La inyección de dependencias (Dependency Injection, DI) es un patrón de diseño que permite desacoplar las clases de sus dependencias, facilitando la reutilización, el testeo y el mantenimiento del código.
+
+---
+
+### ¿Qué es la inyección de dependencias?
+
+Consiste en proporcionar a una clase sus dependencias (servicios, objetos, etc.) desde fuera, en lugar de crearlas internamente. Así, la clase no depende de implementaciones concretas, sino de abstracciones (interfaces).
+
+---
+
+### Ejemplo completo de inyección de dependencias
+
 ```ts
-// PASO 1: Definimos una interfaz para el servicio
-// Esto describe qué métodos debe tener nuestro servicio de mensajes
+// 1. Definimos una interfaz para el servicio
 interface MensajeService {
   enviarMensaje(mensaje: string): void;
 }
 
-// PASO 2: Creamos una implementación concreta del servicio
-// Esta es la clase real que enviará mensajes por email
+// 2. Implementación concreta del servicio (envía emails)
 class EmailService implements MensajeService {
   enviarMensaje(mensaje: string): void {
     console.log(`Enviando email: ${mensaje}`);
@@ -14,8 +26,7 @@ class EmailService implements MensajeService {
   }
 }
 
-// PASO 3: Creamos otra implementación para testing
-// Esta es una versión falsa para usar en pruebas
+// 3. Implementación para testing (mock)
 class MockService implements MensajeService {
   enviarMensaje(mensaje: string): void {
     console.log(`[TEST] Mensaje simulado: ${mensaje}`);
@@ -23,29 +34,32 @@ class MockService implements MensajeService {
   }
 }
 
-// PASO 4: Creamos la clase que usará el servicio
-// Notifica usuarios usando el servicio de mensajes
+// 4. Clase que usa el servicio inyectado
 class Notificador {
-  // El servicio se inyecta por el constructor
-  constructor(private servicio: MensajeService) { }
-
+  constructor(private servicio: MensajeService) {}
   notificar(usuario: string, mensaje: string): void {
     const mensajeCompleto = `Para ${usuario}: ${mensaje}`;
     this.servicio.enviarMensaje(mensajeCompleto);
   }
 }
 
-// PASO 5: Implementación en producción
-// Creamos el servicio real (EmailService)
+// 5. Implementación en producción
 const emailService = new EmailService();
-// Lo inyectamos en el Notificador
 const notificadorReal = new Notificador(emailService);
 notificadorReal.notificar("Juan", "Hola desde la app!");
 
-// PASO 6: Implementación para pruebas
-// Creamos el servicio falso (MockService)
+// 6. Implementación para pruebas
 const mockService = new MockService();
-// Lo inyectamos en el Notificador
 const notificadorTest = new Notificador(mockService);
 notificadorTest.notificar("UsuarioTest", "Mensaje de prueba");
 ```
+
+---
+
+### Ventajas de la inyección de dependencias
+
+- Facilita el testeo (puedes inyectar mocks o stubs).
+- Desacopla las clases de implementaciones concretas.
+- Permite cambiar la lógica de negocio sin modificar la clase consumidora.
+
+---

@@ -1,10 +1,27 @@
+## Decoradores de Método en TypeScript: Explicación Exhaustiva
+
+Los decoradores de método permiten interceptar, modificar o extender el comportamiento de los métodos de una clase. Son útiles para logging, validaciones, control de acceso, etc.
+
+### ¿Qué es un decorador de método?
+
+Un decorador de método es una función que recibe:
+
+- `target`: El prototipo de la clase (o el constructor para métodos estáticos).
+- `propertyKey`: El nombre del método decorado.
+- `descriptor`: Un descriptor que permite modificar el método.
+
+### Ejemplo práctico:
+
 ```ts
-// Decorador de método
-function LogMethod(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-  const originalMethod = descriptor.value; // Guardamos el método original
-  descriptor.value = function(...args: any[]) {
+function LogMethod(
+  target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
     console.log(`Método "${propertyKey}" llamado con argumentos:`, args);
-    const result = originalMethod.apply(this, args); // Llamamos al método original
+    const result = originalMethod.apply(this, args);
     console.log(`Método "${propertyKey}" devolvió:`, result);
     return result;
   };
@@ -19,14 +36,18 @@ class CalcDecorada {
 
 const calculadora = new CalcDecorada();
 calculadora.sumar(5, 3);
-
-/*
-COMENTARIOS:
-1. El decorador `LogMethod` recibe tres argumentos:
-   - `target`: El prototipo de la clase (para métodos estáticos, sería el constructor).
-   - `propertyKey`: El nombre del método.
-   - `descriptor`: Un objeto que describe el método.
-2. Modificamos el método original para agregar logs antes y después de su ejecución.
-3. Esto es útil para depurar o monitorear métodos.
-*/
 ```
+
+#### Explicación paso a paso:
+
+1. El decorador reemplaza el método original por una nueva función que agrega logs antes y después de la ejecución.
+2. Se puede acceder a los argumentos y al resultado.
+3. Es útil para depuración, monitoreo, validaciones, etc.
+
+### Usos comunes
+
+- Logging de métodos.
+- Validaciones automáticas.
+- Medición de tiempos de ejecución.
+
+---
